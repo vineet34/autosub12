@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from mainsite import settings
 from mainsite.users.views import registration_page_view, login, logout, Profile
-from mainsite.Assignment.views import dashboard, CreateAssignment, AddQuestion, EditAssignment, PreviewAssignment, DeleteAssignment, SolveAssignment, ModifyAssignment
+from mainsite.Assignment.views import dashboard, CreateAssignment, AddQuestion, EditAssignment, PreviewAssignment, DeleteAssignment, SolveAssignment, ModifyAssignment, DeleteFile
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     ('^assignment/edit/$', EditAssignment),
     ('^assignment/preview/$', PreviewAssignment),
     ('^user/profile/$', Profile),
+	(r'^assignment/file/delete/(?P<assg_id>[\w\-]+)/(?P<qid>[\w\-]+)/(?P<fname>[\w\s\.-]+)/$', DeleteFile),
 )
 
 if settings.DEBUG:

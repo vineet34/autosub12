@@ -1,0 +1,12 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div class="box">
+	<span style="color:purple; font-size:15px;">{{ fname }}</span> was successfully deleted.
+	<form method="POST" action="/assignment/solve/">{% csrf_token %}
+		<input type="hidden" value="{{ assg_id }}" name="solve_assg" >
+		<input type="hidden" name="submit" value="Solve" >
+		<input type="submit" value="BACK" style="width:250px; float:right;" >
+	</form>
+	<br>
+</div>
+{% include 'includes/footer.html' %}

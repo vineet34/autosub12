@@ -5,7 +5,7 @@ from mainsite.Assignment.models import Assignment, Assg_Questions, Assg_Answers,
 from django.views.generic.simple import direct_to_template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
-from mainsite.settings import QUES_FILES_DIR, ALLOWED_FILE_TYPES, FILE_MAX_SIZE
+from mainsite.settings import QUES_FILES_DIR, ALLOWED_FILE_TYPES, FILE_MAX_SIZE, ANS_FILES_DIR
 from datetime import timedelta
 import datetime
 import os.path
@@ -190,7 +190,7 @@ def SolveAssignment(request):
 					submitted = True
 					answers = Assg_Answers.objects.filter(assg_id=solve_assg, answer_by=request.user.username)
 					message = 'You have successfully submitted this assignment at '+str(stat.assg_submit_time)
-					return direct_to_template(request, 'Assignment/solve_assignment.html', locals())
+					return direct_to_template(request, 'Assignment/solve_assignment.html', locals())						
 				if request.POST['submit'] == 'Solve':
 					now = datetime.datetime.now()
 					if  assg.assg_status == 'Active':
@@ -209,14 +209,46 @@ def SolveAssignment(request):
 							if answer.count():
 								Assg_Answers.objects.filter(assg_id=solve_assg, ques_id=question.id, answer_by=request.user.username).update(answer=ans)
 							else:
-								Assg_Answers(assg_id=solve_assg, ques_id=question.id, answer_by=request.user.username, answer=ans, ans_marks=-1).save()
-					answers = Assg_Answers.objects.filter(assg_id=solve_assg, answer_by=request.user.username)
+								Assg_Answers(assg_id=solve_assg, ques_id=question.id, answer_by=request.user.username, answer=ans, ans_marks=-1).save()								
+							if request.FILES.get('ans_file_'+str(question.id),''):
+								ans_file = request.FILES['ans_file_'+str(question.id)]
+								f, ext = os.path.splitext(ans_file.name)
+								f_err_message = ''
+								if ext not in ALLOWED_FILE_TYPES or ans_file.size > FILE_MAX_SIZE:								
+									if ext not in ALLOWED_FILE_TYPES :
+										f_err_message += 'Question '+str(question.id)+' : File type not supported.<br>'
+									if ans_file.size > FILE_MAX_SIZE:
+										f_err_message += 'Question '+str(question.id)+' : Maximum file size allowed: 5MB<br>'	
+								else:
+									if not os.path.exists(ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/'):
+										os.makedirs(ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/')
+									fd = open('%s/%s' % (ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/', ans_file.name), 'wb')
+									fd.write(ans_file.read())
+									fd.close()
+					answers = Assg_Answers.objects.filter(assg_id=solve_assg, answer_by=request.user.username)							
 					message = 'Your answers were saved successfully!'
 				elif request.POST['submit'] == 'Submit':
 					Assg_Stats.objects.filter(assg_student_rno=request.user.username, assg_id=solve_assg).update(assg_solution_status='SUBMITTED',assg_submit_time=datetime.datetime.now())
 					answers = Assg_Answers.objects.filter(assg_id=solve_assg, answer_by=request.user.username)
 					submitted = True
-					message = 'You have successfully submitted this assignment at '+str(stat.assg_submit_time)
+					message = 'You have successfully submitted this assignment at '+str(stat.assg_submit_time)					
+				#Populate the uploaded file list now in a dict.
+				filedict = {'':''}				
+				for question in questions:
+					t_path = ANS_FILES_DIR+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/'
+					if os.path.exists(t_path):
+						files = os.listdir(t_path)
+						count = len(os.listdir(t_path))
+						question.ansFileCount = range(count)
+						question.hasAnsFiles = True
+						counter = 0
+						for file in files:
+							filedict[str(question.id)+'_'+str(counter)+'_name'] = file
+							filedict[str(question.id)+'_'+str(counter)+'_url'] = t_path+file
+							counter += 1
+					else:
+						question.ansFileCount = 0
+						question.hasAnsFiles = False						
 				return direct_to_template(request, 'Assignment/solve_assignment.html', locals())
 			else:
 				return direct_to_template(request, 'Assignment/solve_assignment.html', locals())
@@ -312,3 +344,13 @@ def ModifyAssignment(request, assg_id):
 			return direct_to_template(request, 'Assignment/modify.html', locals())
 		else:
 			return HttpResponseRedirect('/dashboard')
+			
+def DeleteFile(request, assg_id, qid, fname): 
+	if request.user.is_authenticated():
+		file = ANS_FILES_DIR+'/'+request.user.username+'/'+assg_id+'/'+str(qid)+'/'+fname
+		folder = ANS_FILES_DIR+'/'+request.user.username+'/'+assg_id+'/'+str(qid)+'/'
+		if os.path.exists(file):   #multiple requests to delete the same file
+			os.remove(file)
+		return direct_to_template(request, 'Assignment/file_deleted.html', locals())
+	else:
+		return HttpResponseRedirect('/login/')

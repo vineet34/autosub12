@@ -1,5 +1,6 @@
 {% include 'includes/nav.html' %}
-{% include 'includes/menu.html' %} k
+{% include 'includes/menu.html' %}
+{% load custom %}
 <div style="height:100%; width:100%; margin-top:-64px; overflow-y:scroll; position:absolute;">
 <div class="dummy" style="height:70px"></div>
 
@@ -48,7 +49,9 @@
 				<tr>
 					<div class="inbox">
 						<td><strong>Uploaded:</strong></td>
-						<td>{{ assg.creation_time }} <strong>| Lock Time:</strong> {{ assg.assg_lock_datetime }}</td>
+						<td>{{ assg.creation_time }}</td>
+						<td><strong>| Lock Time:</strong></td>
+						<td>{{ assg.assg_lock_datetime }}</td>
 					</div>
 				</tr>
 				<tr>
@@ -72,19 +75,28 @@
 		</tr>
 	</table>
 	{% endif %}
+	{% if f_err_message %}
+	<table id="#notify">
+		<tr>
+			<td clospan="2"class="msgs">
+				{{ f_err_message|safe }}
+			</td>
+		</tr>
+	</table>
+	{% endif %}
 	<hr></hr>
-	<form action="/assignment/solve/" method="POST">
+	<form action="/assignment/solve/" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		{% for question in questions %}
 		<table>
 			<tr>
 				<td><strong>Question:</strong></td>
-				<td style="width:800px; text-align:justify;">{{ question.question }}</td>
+				<td>{{ question.question }}</td>
 			</tr>
 			{% if question.ques_hint %}
 			<tr>
 				<td><strong>Hint:</strong></td>
-				<td style="width:800px; text-align:justify;">{{ question.ques_hint }}</td>
+				<td>{{ question.ques_hint }}</td>
 			</tr>
 			{% endif %}
 			{% if question.ques_file %}
@@ -99,6 +111,28 @@
 					<textarea style="width:800px; height:80px;" name="ans{{ question.id }}" {% if submitted %} disabled {% endif %}>{% for ans in answers %}{% if ans.ques_id == question.id %}{{ ans.answer }}{% endif %}{% endfor %}</textarea>
 				</td>
 			</tr>
+			<tr>
+				<td><strong>File</strong><span class="msgs"> (If any, Max. 5MB)</span></td>
+				<td>
+					<input type="file" name="ans_file_{{ question.id }}" id="id_ans_file"/>
+				</td>
+			</tr>
+			{% if question.hasAnsFiles %}
+				<tr>
+					<td></td>
+					<td style="font-size:15px;">
+						{% for i in question.ansFileCount %}
+							<a href="{% getFileURL filedict i question.id%}">{% getFileName filedict i question.id%}</a><br>
+						{% endfor %}
+					</td>
+					<td>
+						{% for i in question.ansFileCount %}
+							<a href="/assignment/file/delete/{{ solve_assg }}/{{ question.id }}/{% getFileName filedict i question.id%}/"><img class="imgbtn" src="/media/style/img/trash.png" title="Delete File" /></a>
+							<br>
+						{% endfor %}
+					</td> 
+				</tr>				
+			{% endif %}			
 		</table>
 		<hr></hr>
 		{% endfor %}
