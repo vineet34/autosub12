@@ -114,7 +114,7 @@
 			<tr>
 				<td><strong>File</strong><span class="msgs"> (If any, Max. 5MB)</span></td>
 				<td>
-					<input type="file" name="ans_file_{{ question.id }}" id="id_ans_file"/>
+					<input type="file" name="ans_file_{{ question.id }}" id="id_ans_file" {% if submitted %} disabled {% endif %}/>
 				</td>
 			</tr>
 			{% if question.hasAnsFiles %}
@@ -127,8 +127,10 @@
 					</td>
 					<td>
 						{% for i in question.ansFileCount %}
-							<a href="/assignment/file/delete/{{ solve_assg }}/{{ question.id }}/{% getFileName filedict i question.id%}/"><img class="imgbtn" src="/media/style/img/trash.png" title="Delete File" /></a>
-							<br>
+							{% if not submitted %}
+								<a href="/assignment/file/delete/{{ solve_assg }}/{{ question.id }}/{% getFileName filedict i question.id%}/"><img class="imgbtn" src="/mainsite/media/style/img/trash.png" title="Delete File" /></a>
+								<br>
+							{% endif %}
 						{% endfor %}
 					</td> 
 				</tr>				
