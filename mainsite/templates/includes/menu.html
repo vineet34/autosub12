@@ -1,0 +1,28 @@
+<div id="menu">
+	<div style="height:84px;width:225px;"></div>
+	<div class="menu_item">
+		<a href="/dashboard/">Dashboard</a>
+	</div>
+	{% if user.is_staff %}	
+	<div class="menu_item">
+		<a href="/assignment/create/">Create Assignment</a>
+	</div>
+	<div class="menu_item">
+		<a href="/assignment/edit/">Edit Assignment</a>
+	</div>
+	<div class="menu_item">
+		<a href="#">Grade Assignment</a>
+	</div>
+	{% endif %}
+	{% if not user.is_staff or user.is_superuser %}
+	<div class="menu_item">
+		<a href="/assignment/solve/">Solve Assignment</a>
+	</div>
+	{% endif %}	
+	<div class="menu_item">
+		<a href="/assignment/preview/">Preview Assignment</a>
+	</div>
+	<div class="menu_item">
+		<a href="/user/profile/">Profile</a>
+	</div>
+</div>

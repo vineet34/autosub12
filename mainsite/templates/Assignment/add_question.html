@@ -1,0 +1,43 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+
+<div id="create_assg">
+	{% if not assg_locked %}
+	<center>
+		ADD QUESTION <br><br>
+		<form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+			<table>
+				{% for field in form %}
+					<tr>
+						<td>{{ field.label|safe }}</td>
+						<td>{{ field }}</td>
+						{% if field.errors %}
+						<td class="error">{{ field.errors }}</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+					<tr>
+						<td>
+							Select the Assignment
+						</td>
+						<td>
+							<select name="assg_select" style="width:385px;">
+								{% for assignment in assignments %} 
+								<option value="{{ assignment.id }}"	{% if assignment.id == add_to %}selected{% endif %}>{{ assignment.assg_title }}</option>
+								{% endfor %}
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>{{ message }}</td>
+					</tr>
+			</table>
+			<input type="submit" name="add_ques" style="width:120px;" value="Add">
+		</form>
+	</center>
+	{% else %}
+	You cannot add to this assignment as it has been locked. Click <a href="/assignment/edit/">here</a> to go back.
+	{% endif %}
+</div>
+
+{% include 'includes/footer.html' %}

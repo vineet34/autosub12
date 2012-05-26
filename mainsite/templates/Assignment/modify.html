@@ -1,0 +1,62 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div id="create_assg">
+	{% if not assg_just_locked %}
+		{% if not assg_locked %}
+		<center>
+			MODIFY ASSIGNMENT <br><br>
+			<form action="/assignment/modify/{{ assg_id }}/" method="POST">{% csrf_token %}
+				<table>
+					{% for field in form %}
+						<tr>
+							<td>{{ field.label }}</td>
+							<td>{{ field }}</td>
+							{% if field.errors %}
+							<td class="error">{{ field.errors }}</td>
+							{% endif %}
+						</tr>
+					{% endfor %}
+						<tr>
+							<td>
+								Select Students:
+							</td>
+							<td>
+								{% for student in students %}
+								<input type="checkbox" name="cbx{{ student.id }}" value="{{ student.id }}" {% if student.cbx_chk %}checked{% endif %} /> <span  style="font-size:15px;">{{ student.first_name }}</span><br>
+								{% endfor %}
+							</td>
+						</tr>
+						<tr>
+							<td> 
+								Lock Date:
+							</td>
+							<td>
+								<input type="text" name="lock_dt_tm" value="{{ lock_dt_tm|date:"m/d/Y" }} {{ lock_dt_tm|time:"H:i" }}" id="lock_dt_tm"/>
+							</td>
+						</tr>
+						<tr>
+							<td> 
+								Or, Lock Now: 
+							</td>
+							<td>
+								<input type="checkbox" name="lock_now" id="lock_now_cbx"/> Lock <span style="font-size:13px; color:#6E0E10;">(WARNING: This cannot be undone)</span>
+							</td>
+						</tr>
+					{% if message %}
+						<tr>
+							<td style="color:#6E0E10;" colspan="2">{{ message }}</td>
+						</tr>
+					{% endif %}
+				</table><br>
+				<input type="submit" style="width:120px;" name="modify_assg" value="Update">
+			</form>
+		</center>
+		{% else %}
+			{{ message }} Click <a href="/assignment/edit/">Here</a> To Go Back.
+		{% endif %}
+	{% else %}
+		The assignment has just been locked. Click <a href="/assignment/edit/">Here</a> To Go Back.
+	{% endif %}
+</div>
+
+{% include 'includes/footer.html' %}

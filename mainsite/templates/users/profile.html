@@ -1,0 +1,91 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div style="height:100%; width:100%; margin-top:-64px; overflow-y:scroll; position:absolute;">
+<div class="dummy" style="height:70px"></div>
+
+<div class="box">
+Profile | {{ user_profile.name }}, {{ user_profile.rno }}
+</div>
+<div class="box">
+	<div class="msg" style="padding-left:0px;">
+		{% if message and not err_message %}
+				{{ message|safe }}<br>			
+			<hr></hr>
+		{% else %}
+			{{ err_message|safe }}<br>
+			<hr></hr>
+		{% endif %}	
+	</div>
+	
+	<form action="/user/profile/" method="POST" enctype="multipart/form-data">
+	{% csrf_token%}
+	<table>
+		<tr>
+			<td></td>
+			<td style="font-size:14px;text-align:center; color:#6E0E10;">Your basic profile.</td>
+		</tr>
+		<tr>
+			<td><strong>Name:</strong></td>
+			<td>
+				<input type="text" name="name" value="{{ user_profile.name }}" style="width:400px;" maxlength="30"/>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Email:</strong></td>
+			<td>
+				<input type="text" name="email" value="{{ user_profile.email }}" style="width:400px;" />
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Hostel:</strong></td>
+			<td>
+				<input type="text" name="hostel" value="{{ user_profile.hostel }}" style="width:400px;" />
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Contact:</strong></td>
+			<td>
+				<input type="text" name="cno" value="{{ user_profile.cno }}" style="width:400px;" />
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td style="font-size:14px;text-align:center; color:#6E0E10;">If you want to update your password, fill in the next two fields.</td>
+		</tr>
+		<tr>
+			<td><strong>Password:</strong></td>
+			<td>
+				<input type="password" name="pwd" style="width:400px;" />
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Retype Password:</strong></td>
+			<td>
+				<input type="password" name="re_pwd" style="width:400px;" />
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td style="font-size:14px;text-align:center; color:#6E0E10;">Your profile picture. Preferred 6:5, 360x300 px, Max. 2.5MB</td>
+		</tr>
+		<tr>
+			<td><strong>Profile Pic:</strong></td>
+			<td>
+				<input type="file" name="dp" style="width:400px;" />
+			</td>
+		</tr>
+	</table><br>
+	<hr></hr><br>
+	<input type="submit" value="Update" style="width:250px;" />
+	</form>
+	<table  id="p_pic_tbl">
+		<tr>
+			<td id="asd">
+				<img src="{{ profile_pic }}" class="dp"/>
+			</td>
+		</tr>
+	</table>
+</div>
+
+</div>
+{% include 'includes/footer.html' %}

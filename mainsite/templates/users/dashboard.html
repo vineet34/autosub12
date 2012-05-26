@@ -1,0 +1,93 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div class="box">
+Dashboard Home | {{ user.first_name }}, {{ user.username }}
+<hr></hr>
+You have {{ no_assg_total }} pending assignments.<br>
+You have submitted {{ no_assg_sub }} assignments.
+<hr></hr><br>
+{% if no_assg_total %}
+<center>
+<table rules="all" style="font-size:16px;">
+		<tr>
+			<td>
+				<strong>Title</strong>
+			</td>
+			<td>
+				<strong>Uploader</strong>
+			</td>
+			<td>
+				<strong>Uploaded</strong>
+			</td>
+			<td>
+				<strong>Lock Time</strong>
+			</td>
+			<td>
+				<strong>Status</strong>
+			</td>
+			<td>
+				<strong>Solution Status</strong>
+			</td>
+			<td>
+				<strong>Submitted</strong>
+			</td>
+			<td>
+				<strong>Marks</strong>
+			</td>
+			<td>
+				<strong>Comments</strong>
+			</td>
+		</tr>
+{% for assignment in assignments %}
+	{% for stat in stats %}
+		{% if stat.assg_id == assignment.id %}
+		<tr>
+			<td>
+				{{ assignment.assg_title }}
+			</td>
+			<td>
+				{{ assignment.created_by }}
+			</td>
+			<td>
+				{{ assignment.creation_time }}
+			</td>
+			<td>
+				{% if not assignment.assg_lock_datetime == ref_dt_tm %} 
+					{{ assignment.assg_lock_datetime }}
+				{% else %}
+				--
+				{% endif %}
+			</td>
+			<td>
+				{{ assignment.assg_status }}
+			</td>
+			<td>
+				{{ stat.assg_solution_status }}
+			</td>
+			<td>
+				{% if not stat.assg_submit_time|slugify == '2099-12-31-235959' %} 
+					{{ stat.assg_submit_time }}
+				{% else %}
+				--
+				{% endif %}
+			</td>
+			<td>
+				{% if stat.assg_marks == -1 %}NG{% else %}{{ stat.assg_marks }}{% endif %}
+			</td>
+			<td>
+				{{ stat.assg_comments }}
+			</td>
+		</tr>
+		{% endif %}
+	{% endfor %}
+{% endfor %}
+</table>
+<div class="msg" style="font-size:14px;">
+* NG: Not Graded
+</div>
+</center>
+{% endif %}
+
+
+</div>
+{% include 'includes/footer.html' %}

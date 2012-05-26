@@ -1,0 +1,46 @@
+{% include 'includes/nav.html' %}
+<center>
+<div id="login">
+	<div style="text-align:left;width:100%;">
+		<h3>Login</h3>
+	</div>
+	<hr /><br>
+	<form action="/login/" method="POST">{% csrf_token %}
+		<center>
+			<table>
+				<tr>
+					<td>
+						Roll No.
+					</td>
+					<td>
+						<input type="text" name="rno" size="30" maxlength="8" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Password
+					</td>
+					<td>
+						<input type="password" name="pwd" size="30" maxlength="30" />						
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><br>
+						<input type="submit" name="login" value="Login" style="width:100px;float:left;"/>
+						</form>
+						<a href="/register/">
+							<input type="button" value="Register" style="width:100px;float:right;" />
+						</a>
+					</td>
+				</tr>
+			</table>
+		</center>
+	<div id="message" class="message">
+	<center>
+	{{ message }}
+	</center>
+	</div>
+</div>
+</center>
+
+{% include 'includes/footer.html' %}

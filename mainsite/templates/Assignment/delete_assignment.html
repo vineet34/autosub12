@@ -1,0 +1,15 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div id="delete_assignment" class="box">
+	{% if not err_message %}
+	Are your sure you want to delete the assignment "{% for assg in assignment %}{{ assg.assg_title }}{% endfor %}"
+	<form action="/assignment/delete/{{ assg_id }}/" method="POST">
+		{% csrf_token %}
+		<input type="submit" value="Confirm" style="float:right;width:250px;"/> 
+	</form>
+	<br>
+	{% else %}
+		{{ err_message }} Click <a href="/assignment/edit/">Here</a> To Go Back.
+	{% endif %}
+</div>
+{% include 'includes/footer.html' %}

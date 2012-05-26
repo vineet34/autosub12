@@ -1,0 +1,83 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div style="height:100%; width:100%; margin-top:-64px; overflow-y:scroll; position:absolute;">
+<div class="dummy" style="height:70px"></div>
+
+<div id="pvw_assg">
+	<form action="/assignment/preview/" method="POST">{% csrf_token %}
+		Select Assignment: 
+		<select name="pvw_assg" style="width:200px;">
+			{% for assignment in assignments %}
+				<option value="{{ assignment.id }}">{{ assignment.assg_title }}</option>
+			{% endfor %}
+		</select>
+		<input type="submit" name="submit" value="Preview" style="float:right; width:250px;">
+	</form>
+</div>
+{% if assg_id %}
+<div class="box">
+	<hr></hr>
+	<table>
+		{% for assignment in assg_to_pvw %}
+		<tr>
+			<div class="inbox">
+				<td><strong>Title:</strong></td>
+				<td>{{ assignment.assg_title }}</td>
+			</div>
+		</tr>
+		<tr>
+			<div class="inbox">
+				<td><strong>Details:</strong></td>
+				<td>{{ assignment.assg_details }}</td>
+			</div>
+		</tr>
+		<tr>
+			<div class="inbox">
+				<td><strong>Uploaded by:</strong></td>
+				<td>{{ assignment.created_by }}</td>
+			</div>
+		</tr>
+		<tr>
+			<div class="inbox">
+				<td><strong>Uploaded:</strong></td>
+				<td>{{ assignment.creation_time }} | <strong>Lock Time:</strong> {{ assignment.assg_lock_datetime }}</td>
+			</div>
+		</tr>
+		<tr>
+			<div class="inbox">
+				<td><strong>Status:</strong></td>
+				<td>{{ assignment.assg_status }}</td>
+			</div>
+		</tr>
+		{% endfor %}
+	</table>
+	<hr></hr>
+</div>
+<div class="box">
+	<hr></hr>
+	{% for question in questions %}
+	<table>
+		<tr>
+			<td><strong>Question:</strong></td>
+			<td>{{ question.question }}</td>
+		</tr>
+		{% if question.ques_hint %}
+		<tr>
+			<td><strong>Hint:</strong></td>
+			<td>{{ question.ques_hint }}</td>
+		</tr>
+		{% endif %}
+		{% if question.ques_file %}
+		<tr>
+			<td><strong>Attached:</strong></td>
+			<td><a style="font-size:14px;" href="/mainsite/media/uploads/ques_files/{{ question.ques_file }}" target="_blank">{{ question.ques_file }}</a></td>
+		</tr>
+		{% endif %}
+	</table>
+	<hr></hr>
+	{% endfor %}
+</div>
+{% endif %}
+
+</div>
+{% include 'includes/footer.html' %}

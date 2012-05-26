@@ -1,0 +1,19 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div id="edit_assignment">
+	<form action="/assignment/edit/" method="POST">{% csrf_token %}
+		Select Assignment: 
+		<select name="edit_assg">
+			{% for assignment in assignments %}
+				<option value="{{ assignment.id }}">{{ assignment.assg_title }}</option>
+			{% endfor %}
+		</select>
+		<br><br>
+		<input type="submit" name="submit" value="Delete Assignment" style="float:right; width:250px;">
+		<input type="submit" name="submit" value="Modify Assignment" style="float:right; width:250px; margin-right:10px;">
+		<input type="submit" name="submit" value="Add Questions" style="float:right; width:250px; margin-right:10px;">
+	</form>
+	<br>
+</div>
+{% include 'includes/footer.html' %}
+

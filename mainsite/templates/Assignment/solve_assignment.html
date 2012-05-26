@@ -1,0 +1,120 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div style="height:100%; width:100%; margin-top:-64px; overflow-y:scroll; position:absolute;">
+<div class="dummy" style="height:70px"></div>
+
+<div id="solve_assignment" class="box">
+	<form action="/assignment/solve/" method="POST">{% csrf_token %}
+		Select Assignment: 
+		<select name="solve_assg">
+			{% for assignment in assignments %}
+				{% for stat in stats %}
+					{% if stat.assg_id == assignment.id %}
+						<option value="{{ assignment.id }}">{{ assignment.assg_title }}</option>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
+		</select>
+		<input type="submit" name="submit" value="Solve" style="float:right; width:250px;">
+	</form>
+</div>
+{% if assg_locked %}
+<div class="box">	
+	The assignment you chose has been locked.
+</div>
+{% else %}
+	{% if assg %}
+		<div class="box">
+			<hr></hr>
+			<table>
+				<tr>
+					<div class="inbox">
+						<td><strong>Title:</strong></td>
+						<td>{{ assg.assg_title }}</td>
+					</div>
+				</tr>
+				<tr>
+					<div class="inbox">
+						<td><strong>Details:</strong></td>
+						<td>{{ assg.assg_details }}</td>
+					</div>
+				</tr>
+				<tr>
+					<div class="inbox">
+						<td><strong>Uploaded by:</strong></td>
+						<td>{{ assg.created_by }}</td>
+					</div>
+				</tr>
+				<tr>
+					<div class="inbox">
+						<td><strong>Uploaded:</strong></td>
+						<td>{{ assg.creation_time }} <strong>| Lock Time:</strong> {{ assg.assg_lock_datetime }}</td>
+					</div>
+				</tr>
+				<tr>
+					<div class="inbox">
+						<td><strong>Status:</strong></td>
+						<td>{{ assg.assg_status }}{% if submitted %} | Submitted {% endif %}</td>
+					</div>
+				</tr>
+			</table>
+			<hr></hr>
+		</div>
+	{% endif %}
+{% if questions %}
+<div class="box">
+	{% if message %}
+	<table id="#notify">
+		<tr>
+			<td clospan="2"class="msg">
+				{{ message }}
+			</td>
+		</tr>
+	</table>
+	{% endif %}
+	<hr></hr>
+	<form action="/assignment/solve/" method="POST">
+		{% csrf_token %}
+		{% for question in questions %}
+		<table>
+			<tr>
+				<td><strong>Question:</strong></td>
+				<td style="width:800px; text-align:justify;">{{ question.question }}</td>
+			</tr>
+			{% if question.ques_hint %}
+			<tr>
+				<td><strong>Hint:</strong></td>
+				<td style="width:800px; text-align:justify;">{{ question.ques_hint }}</td>
+			</tr>
+			{% endif %}
+			{% if question.ques_file %}
+			<tr>
+				<td><strong>Attached:</strong></td>
+				<td><a  style="font-size:14px;" href="/media/uploads/ques_files/{{ question.ques_file }}" target="_blank">{{ question.ques_file }}</a></td>
+			</tr>
+			{% endif %}
+			<tr>
+				<td><strong>Your Answer:</strong></td>
+				<td>
+					<textarea style="width:800px; height:80px;" name="ans{{ question.id }}" {% if submitted %} disabled {% endif %}>{% for ans in answers %}{% if ans.ques_id == question.id %}{{ ans.answer }}{% endif %}{% endfor %}</textarea>
+				</td>
+			</tr>
+		</table>
+		<hr></hr>
+		{% endfor %}
+		<br>
+		<input type="hidden" name="solve_assg" value="{{ solve_assg }}" />
+		<input type="submit" name="submit" value="Save" style="width:250px; float:left;"/>
+	</form>
+	<form action="/assignment/solve/" method="POST">
+		{% csrf_token %}
+		<input type="hidden" name="solve_assg" value="{{ solve_assg }}" />
+		<input type="submit" name="submit" value="Submit" style="width:250px; float:right;"/>
+	</form>
+	<br>
+</div>
+{% endif %}
+
+{% endif %}
+</div>
+{% include 'includes/footer.html' %}

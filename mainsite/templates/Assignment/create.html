@@ -1,0 +1,53 @@
+{% include 'includes/nav.html' %}
+{% include 'includes/menu.html' %}
+<div id="create_assg">
+	{% if not create_success %}
+	<center>
+		CREATE ASSIGNMENT <br><br>
+		<form action="" method="POST">{% csrf_token %}
+			<table>
+				{% for field in form %}
+					<tr>
+						<td>{{ field.label }}</td>
+						<td>{{ field }}</td>
+						{% if field.errors %}
+						<td class="error">{{ field.errors }}</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+					<tr>
+						<td>
+							Select Students:
+						</td>
+						<td>
+							{% for student in students %}
+							<input type="checkbox" name="cbx{{ student.id }}" value="{{ student.id }}" {% if student.cbx_chk %}checked{% endif %} /> <span  style="font-size:15px;">{{ student.first_name }}</span><br>
+							{% endfor %}
+						</td>
+					</tr>
+					<tr>
+						<td> 
+							Lock Date:
+						</td>
+						<td>
+							<input type="text" name="lock_dt_tm" style="" id="lock_dt_tm"/>
+						</td>
+					</tr>
+				{% if message %}
+					<tr>
+						<td style="color:#6E0E10;">{{ message }}</td>
+					</tr>
+				{% endif %}
+			</table>
+			<input type="submit" style="width:120px;" name="create_assg" value="Create">
+		</form>
+	</center>
+	{% else %}
+	<center>
+		The Assignment Was Successfully Created. Click <a href="/assignment/add/question/">Here</a> To Add Questions.
+	</center>
+	{% endif %}
+	
+</div>
+
+{% include 'includes/footer.html' %}

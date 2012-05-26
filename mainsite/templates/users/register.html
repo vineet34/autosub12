@@ -1,0 +1,34 @@
+{% include 'includes/nav.html' %}
+
+<center>
+<div id="register">
+	<div style="text-align:left;width:100%;">
+		<h3>Register</h3>
+	</div>
+	<hr /><br>
+	<center>
+		<form action="/register/" method="POST">{% csrf_token %}
+			<table>
+			{% for field in form %}
+				<tr>
+					<td>{{ field.label }}</td>
+					<td>{{ field }}</td>
+					{% if field.errors %}
+					<td class="error">{{ field.errors }}</td>
+					{% endif %}
+				</tr>			
+			{% endfor %}
+			</table>
+			<br><input type="submit" name="register" value="Register" style="width:100px;"/>
+		</form>
+	</center>
+	<br><hr />
+	<div id="message" class="message">
+		<center>
+		{{ message }} Click <a href="/login/">Here</a> to login.
+		</center>
+	</div>
+</div>
+</center>
+
+{% include 'includes/footer.html' %}
