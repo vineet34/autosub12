@@ -210,21 +210,21 @@ def SolveAssignment(request):
 								Assg_Answers.objects.filter(assg_id=solve_assg, ques_id=question.id, answer_by=request.user.username).update(answer=ans)
 							else:
 								Assg_Answers(assg_id=solve_assg, ques_id=question.id, answer_by=request.user.username, answer=ans, ans_marks=-1).save()								
-							if request.FILES.get('ans_file_'+str(question.id),''):
-								ans_file = request.FILES['ans_file_'+str(question.id)]
-								f, ext = os.path.splitext(ans_file.name)
-								f_err_message = ''
-								if ext not in ALLOWED_FILE_TYPES or ans_file.size > FILE_MAX_SIZE:								
-									if ext not in ALLOWED_FILE_TYPES :
-										f_err_message += 'Question '+str(question.id)+' : File type not supported.<br>'
-									if ans_file.size > FILE_MAX_SIZE:
-										f_err_message += 'Question '+str(question.id)+' : Maximum file size allowed: 5MB<br>'	
-								else:
-									if not os.path.exists(ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/'):
-										os.makedirs(ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/')
-									fd = open('%s/%s' % (ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/', ans_file.name), 'wb')
-									fd.write(ans_file.read())
-									fd.close()
+						if request.FILES.get('ans_file_'+str(question.id),''):
+							ans_file = request.FILES['ans_file_'+str(question.id)]
+							f, ext = os.path.splitext(ans_file.name)
+							f_err_message = ''
+							if ext not in ALLOWED_FILE_TYPES or ans_file.size > FILE_MAX_SIZE:								
+								if ext not in ALLOWED_FILE_TYPES :
+									f_err_message += 'Question '+str(question.id)+' : File type not supported.<br>'
+								if ans_file.size > FILE_MAX_SIZE:
+									f_err_message += 'Question '+str(question.id)+' : Maximum file size allowed: 5MB<br>'	
+							else:
+								if not os.path.exists(ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/'):
+									os.makedirs(ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/')
+								fd = open('%s/%s' % (ANS_FILES_DIR+'/'+request.user.username+'/'+solve_assg+'/'+str(question.id)+'/', ans_file.name), 'wb')
+								fd.write(ans_file.read())
+								fd.close()
 					answers = Assg_Answers.objects.filter(assg_id=solve_assg, answer_by=request.user.username)							
 					message = 'Your answers were saved successfully!'
 				elif request.POST['submit'] == 'Submit':
