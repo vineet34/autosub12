@@ -1,6 +1,18 @@
 <!-- dashboard  -->
 {% include 'includes/nav.html' %}
 {% include 'includes/menu.html' %}
+
+{% load dajaxice_templatetags %}
+{% dajaxice_js_import %}
+<script type="text/javascript">
+	function my_js_callback(data){
+		alert(data.message);
+	}
+</script>
+
+
+
+{% if not user.is_superuser %}
 <div class="box">
 Dashboard Home | {{ user.first_name }}, {{ user.username }}
 <hr></hr>
@@ -88,7 +100,15 @@ You have submitted {{ no_assg_sub }} assignments.
 </div>
 </center>
 {% endif %}
-
+</div>
+{% else %}  <!-- superuser code-->
+<div class="box">
+Dashboard Home | {{ user.first_name }}, {{ user.username }} (Superuser)
+<hr></hr>
+Available tasks -<br><br>
+<button name="btnViewUsers"onClick="Dajaxice.mainsite.Assignment.myexample(my_js_callback);">View Users</button>
 
 </div>
+{% endif %} <!-- end user if loop -->
+
 {% include 'includes/footer.html' %}

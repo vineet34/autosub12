@@ -1,7 +1,10 @@
+from django.conf import settings
 from django.conf.urls.defaults import patterns, include, url
 from mainsite import settings
 from mainsite.users.views import registration_page_view, login, logout, Profile
 from mainsite.Assignment.views import dashboard, CreateAssignment, AddQuestion, EditAssignment, PreviewAssignment, DeleteAssignment, SolveAssignment, ModifyAssignment, DeleteFile
+from dajaxice.core import dajaxice_autodiscover
+dajaxice_autodiscover()
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -26,6 +29,7 @@ urlpatterns = patterns('',
     ('^assignment/preview/$', PreviewAssignment),
     ('^user/profile/$', Profile),
 	(r'^assignment/file/delete/(?P<assg_id>[\w\-]+)/(?P<qid>[\w\-]+)/(?P<fname>[\w\s\.-]+)/$', DeleteFile),
+	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 )
 
 if settings.DEBUG:
