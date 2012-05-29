@@ -5,8 +5,10 @@
 {% load dajaxice_templatetags %}
 {% dajaxice_js_import %}
 <script type="text/javascript">
-	function my_js_callback(data){
-		alert(data.message);
+	function showData(data){
+		//alert(data.data);
+		document.getElementById("display").innerHTML = data.data;
+		document.getElementById("display").style.display="block";
 	}
 </script>
 
@@ -102,13 +104,15 @@ You have submitted {{ no_assg_sub }} assignments.
 {% endif %}
 </div>
 {% else %}  <!-- superuser code-->
-<div class="box">
-Dashboard Home | {{ user.first_name }}, {{ user.username }} (Superuser)
-<hr></hr>
-Available tasks -<br><br>
-<button name="btnViewUsers"onClick="Dajaxice.mainsite.Assignment.myexample(my_js_callback);">View Users</button>
 
+<div class="box">
+	Dashboard Home | {{ user.first_name }}, {{ user.username }} (Superuser)
+	<hr></hr>
+	Available tasks -<br><br>
+	<button name="btnViewUsers" onClick="Dajaxice.mainsite.Assignment.getUsers(showData);">View Users</button>
 </div>
+<div class="box" id="display" style="display:none"></div>
+
 {% endif %} <!-- end user if loop -->
 
 {% include 'includes/footer.html' %}
